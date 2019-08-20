@@ -71,6 +71,7 @@ class Level(Resource):
             return {'level_name': level.name, 'level_description': level.description, 'contents': combine}, 200
         return {'message': 'There is not such a level.'}, 404
 
+    @jwt_required
     def put(self, id):
         req_data = request.get_json()
         level = LevelModel.find_by_id(id)
@@ -104,7 +105,7 @@ class Level(Resource):
             level.save_to_db()
             return {'level_name': level.name}, 200
         return {'message': 'There is not such a level.'}, 404
-
+    @jwt_required
     def delete(self, id):
         level = LevelModel.find_by_id(id)
         if level:
@@ -169,6 +170,7 @@ class Game(Resource):
                         combine.append(level)
             return {'game_name': game.name, 'levels': combine}, 200
         return {'message': 'There is not such a game.'}, 404
+    @jwt_required
     def put(self, id):
         data = request.get_json()
         game = GameModel.find_by_id(id)    
@@ -192,6 +194,7 @@ class Game(Resource):
             return {'game_name': game.name, 'levels': list(map(lambda x: x.json(), game.levels))}, 200
         return {'message': 'There is not such a game.'}, 404
 
+    @jwt_required
     def delete(self, id):
         game = GameModel.find_by_id(id)
         users = game.query.filter_by(
@@ -208,7 +211,7 @@ class Game(Resource):
 
 
 class GameLevels(Resource):
-
+    @jwt_required
     def get(self, id):
         game = GameModel.find_by_id(id)
         if game:
@@ -224,6 +227,7 @@ class GameLevels(Resource):
         return {'message': 'There is not such a game.'}
 
 class GameSubscribe(Resource):
+    @jwt_required
     def post(self):
         req_data = request.get_json()
         get_user = UserModel.find_by_id(req_data.get('user_id'))
