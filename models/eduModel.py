@@ -449,7 +449,7 @@ class OptionModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
-    answer = db.Column(db.String(80))
+    answer = db.Column(db.Text)
     is_answer = db.Column(db.Boolean)
 
     def json(self):

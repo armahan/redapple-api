@@ -19,7 +19,6 @@ class QuestionPost(Resource):
             return {'message': 'Question is already exists.'}, 400
         question_add = QuestionModel(code, question, subject)
         question_add.owner.append(user)
-
         for opt in answers:
             answer = ''
             is_true = False
@@ -32,7 +31,7 @@ class QuestionPost(Resource):
             question_add.options.append(save_answer)
             question_add.save_to_db()
             #save_answer.save_to_db()
-        return {'message': 'Question is created.'}, 201
+        return {'question_id': question_add.id, 'code': question_add.code, 'subject_id': question_add.subject_id}, 201
 
 class Questions(Resource):
     def get(self):
