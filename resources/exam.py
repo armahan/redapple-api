@@ -5,13 +5,15 @@ from models.eduModel import QuestionModel, OptionModel, TestModel, UserModel
 
 
 class QuestionPost(Resource):
+    @jwt_required
     def post(self):
+        claims = get_jwt_claims()
         req_data = request.get_json()
         code = req_data.get('code')
         subject = req_data.get('subject_id')
         question = req_data.get('question')
         answers = req_data.get('options')
-        user = UserModel.find_by_id(req_data.get('user_id'))
+        user = UserModel.find_by_id(claims['user_id'])
 
         if QuestionModel.find_by_code(code):
             return {'message': 'Question is already exists.'}, 400
@@ -34,7 +36,7 @@ class QuestionPost(Resource):
 
 class Questions(Resource):
     def get(self):
-        return {'Questions': list(map(lambda x: x.json(), QuestionModel.query.all()))}
+        return {'questions': list(map(lambda x: x.json(), QuestionModel.query.all()))}
 
 class Question(Resource):
 
@@ -81,23 +83,35 @@ class Question(Resource):
             return {'message': 'Question deleted.'}, 200
         return {'message': 'Question not found.'}, 400
 
-class TestPost(Resource):
+class QuestionByUser(Resource):
+    @jwt_required
+    def get(self):
+        claims = get_jwt_claims()
+        user = UserModel.find_by_id(claims['user_id'])
+        if user:
+            return{
+                'questions': list(map(lambda x: x.json(), user.query.filter_by(id=user.id).first().questions))}, 200
+        return {'message': 'User not found.'}, 404
 
+class TestPost(Resource):
+    @jwt_required
     def post(self):
+        claims = get_jwt_claims()
         req_data = request.get_json()
         questions = req_data.get('questions')
         test = req_data.get('test_name')
-        user = UserModel.find_by_id(req_data.get('user_id'))
+        user = UserModel.find_by_id(claims['user_id'])
         if TestModel.find_by_name(test):
             return {'message': 'Test is already exists.'}, 400
         name = TestModel(test)
-        for quest in questions:
-            for q in quest:
-                question = QuestionModel.find_by_id(quest[q])
-                name.question.append(question)
+        if questions:
+            for quest in questions:
+                for q in quest:
+                    question = QuestionModel.find_by_id(quest[q])
+                    name.question.append(question)
         name.owner.append(user)
         name.save_to_db()
-        return {'message': 'Test is created.'}, 201
+        return {'test_id': name.id, 'test_name':name.name}, 201
 
 
 class Tests(Resource):
@@ -115,28 +129,31 @@ class Test(Resource):
             for quest in test.question:
                 add = {}
                 question = QuestionModel.find_by_id(quest.id)
+                add['code'] = question.code
                 add['question_id'] = question.id
                 add['question'] = question.question
                 add['options'] = list(map(lambda x: x.json(), question.options))
                 in_questions.append(add)
 
-            return {'test_name': test.name, 'questions': in_questions}, 200
+            return {'test_id': test.id, 'test_name': test.name, 'questions': in_questions}, 200
         return {'message': 'Test is not found.'}, 400
     def put(self, id):
         req_data = request.get_json()
         questions = req_data.get('questions')
         test = TestModel.find_by_id(id)
         if test:
+            test.name = req_data.get('test_name')
             old_questions = test.question
-            for quest in old_questions:
-                question = QuestionModel.find_by_id(quest.id)
-                test.question.remove(question)
-                test.save_to_db()
-            test.name = req_data.get('name')
+            if old_questions:
+                for quest in old_questions:
+                    question = QuestionModel.find_by_id(quest.id)
+                    test.question.remove(question)
+                    test.save_to_db()
             for quest in questions:
                 for q in quest:
-                    question = QuestionModel.find_by_id(quest[q])
-                    test.question.append(question)
+                    if q == 'question_id':
+                        question = QuestionModel.find_by_id(quest[q])
+                        test.question.append(question)
                 test.save_to_db()
             return {'message': 'Successfully updated.'}, 200
         return {'message': 'Test is not found.'}, 400

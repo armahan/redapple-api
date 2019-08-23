@@ -229,8 +229,9 @@ class GameLevels(Resource):
 class GameSubscribe(Resource):
     @jwt_required
     def post(self):
+        claims = get_jwt_claims()
         req_data = request.get_json()
-        get_user = UserModel.find_by_id(req_data.get('user_id'))
+        get_user = UserModel.find_by_id(claims['user_id'])
         get_game = GameModel.find_by_id(req_data.get('game_id'))
         if get_user and get_game:
             get_game.subscribe.append(get_user)

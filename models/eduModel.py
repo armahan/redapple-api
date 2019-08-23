@@ -132,6 +132,7 @@ class UserModel(db.Model):
     auth_level = db.Column(db.Integer, nullable=True)
     
     games = db.relationship('GameModel', secondary=game_owners, backref='game_owners')
+    questions = db.relationship('QuestionModel', secondary=question_owners, backref='question_owners')
     class_name = db.relationship('ClassNameModel', lazy='dynamic')
     student_class = db.relationship('StudentClassModel', lazy='dynamic')
     student_level = db.relationship('StudentLevelModel', lazy='dynamic')
@@ -376,6 +377,7 @@ class TestModel(db.Model):
 
     def __init__(self, name):
         self.name = name
+        self.question = []
 
     def json(self):
         return {'test_id': self.id, 'test_name': self.name}
