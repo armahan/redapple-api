@@ -42,13 +42,13 @@ class Question(Resource):
     def get(self, id):
         question = QuestionModel.find_by_id(id)
         if question:
-            return {'question': question.question, 'options': list(map(lambda x: x.json(), question.options))}, 200
+            return {'code': question.code, 'subject_id': question.subject_id, 'question': question.question, 'options': list(map(lambda x: x.json(), question.options))}, 200
         return {'message': 'Question not found.'}, 400
 
     def put(self, id):
         code = QuestionModel.find_by_id(id)
         req_data = request.get_json()
-        subject = req_data.get('subject')
+        subject = req_data.get('subject_id')
         question = req_data.get('question')
         answers = req_data.get('options')
         if code:
