@@ -64,8 +64,10 @@ class Content(Resource):
 
     def get(self, id):
         content = ContentModel.find_by_id(id)
+        subjects = content.subject
         if content:
-            return {'content_id': content.id,
+            return {'subject_id': list(map(lambda x: x.json(), subjects)),
+                    'content_id': content.id,
                     'content_name': content.name,
                     'content': content.text }, 200
             # Below loop is content in subjects 
