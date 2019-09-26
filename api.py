@@ -1,9 +1,9 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Api
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from datetime import timedelta
 
-from resources.user import User, UserRegister, UserList, UserLogin
+from resources.user import User, UserRegister, UserList, UserLogin, TokenRefresh, UserLogoutAccess, UserLogoutRefresh
 from resources.classname import ClassNameRegister, ClassNameList, ClassListByTeacher
 from resources.studentclass import StudentClassRegister, StudentInClass
 from resources.level import LevelCreate, GameCreate, LevelList, GameList, Level, Game, GameLevels, ContentByLevel, GameSubscribe, GamesByUser
@@ -23,18 +23,22 @@ api = Api(app)
 @app.before_first_request
 def create_tables():
     db.create_all()
-
+jwt = JWTManager(app)
 
 @app.after_request
 def after_request(response):
+    # response.headers.add('Access-Control-Allow-Origin', '*')
+    # response.headers.add('Access-Control-Allow-Headers',
+    #                      'Content-Type,Authorization')
+    # response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
     response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers',
-                         'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    if request.method == 'OPTIONS':
+        response.headers['Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT'
+        headers = request.headers.get('Access-Control-Request-Headers')
+        if headers:
+            response.headers['Access-Control-Allow-Headers'] = headers
     return response
 
-
-jwt = JWTManager(app)
 
 
 @jwt.user_claims_loader
@@ -47,6 +51,10 @@ def add_claims_to_jwt(identity):
 
 
 api.add_resource(UserLogin, '/login')
+api.add_resource(TokenRefresh, '/refresh')
+
+api.add_resource(UserLogoutAccess, '/logout/access')
+api.add_resource(UserLogoutRefresh, '/logout/refresh')
 
 api.add_resource(User, '/user/<int:id>')
 api.add_resource(UserRegister, '/user/register')
