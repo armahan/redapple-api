@@ -240,6 +240,7 @@ class GameSubscribe(Resource):
         return {'message': 'Game or User not found.'}
 
 class GetSubscribedGames(Resource):
+    @jwt_required
     def get(self):
         claims = get_jwt_claims()
         user = UserModel.find_by_id(claims['user_id'])
