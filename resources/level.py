@@ -239,6 +239,14 @@ class GameSubscribe(Resource):
             return {'message': 'Subscribed to ' + get_game.name}
         return {'message': 'Game or User not found.'}
 
+class GetSubscribedGames(Resource):
+    def get(self):
+        claims = get_jwt_claims()
+        user = UserModel.find_by_id(claims['user_id'])
+        if user:
+            return {'games': list(map(lambda x: x.json(), user.query.filter_by(id=user.id).first().subscribe))}, 200
+        return {'message': 'User not found.'}, 404
+
 class GamesByUser(Resource):
     @jwt_required
     def get(self):

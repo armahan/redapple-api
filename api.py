@@ -6,7 +6,7 @@ from datetime import timedelta
 from resources.user import User, UserRegister, UserList, UserLogin, TokenRefresh, UserLogoutAccess, UserLogoutRefresh
 from resources.classname import ClassNameRegister, ClassNameList, ClassListByTeacher
 from resources.studentclass import StudentClassRegister, StudentInClass
-from resources.level import LevelCreate, GameCreate, LevelList, GameList, Level, Game, GameLevels, ContentByLevel, GameSubscribe, GamesByUser
+from resources.level import LevelCreate, GameCreate, LevelList, GameList, Level, Game, GameLevels, ContentByLevel, GameSubscribe, GamesByUser, GetSubscribedGames
 from resources.studentlevel import StudentLevel, StudentLevelList, StudentLevelUpdate
 from resources.subject import SubjectRegister, Subject, SubjectList
 from resources.content import ContentPost, ContentList, Content, ContentBySubject
@@ -61,6 +61,7 @@ api.add_resource(UserRegister, '/user/register')
 api.add_resource(UserList, '/users')
 
 api.add_resource(GameSubscribe, '/subscribe')
+api.add_resource(GetSubscribedGames, '/subscribe/user')
 
 api.add_resource(ClassNameRegister, '/class/register')
 api.add_resource(ClassNameList, '/classes')
