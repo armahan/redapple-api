@@ -47,7 +47,7 @@ class UserRegister(Resource):
 
 
 class UserList(Resource):
-
+    @jwt_required
     def get(self):
         return {'Users': list(map(lambda x: x.json(), UserModel.query.all()))}, 200
 

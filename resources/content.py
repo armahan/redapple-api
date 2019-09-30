@@ -61,7 +61,7 @@ class Content(Resource):
                         required=True,
                         help="Subject field cannot be blank."
                         )
-
+    @jwt_required
     def get(self, id):
         content = ContentModel.find_by_id(id)
         subjects = content.subject
@@ -73,7 +73,7 @@ class Content(Resource):
             # Below loop is content in subjects 
             # 'subjects': list(map(lambda x: x.json(), content.query.filter_by(id=content.id).first().subject))}, 200
         return {'message': 'Content not found'}, 404
-
+    @jwt_required
     def put(self, id):
         data = Content.parser.parse_args()
         subject = SubjectModel.find_by_subject_id(data['subject_id'])
@@ -88,7 +88,7 @@ class Content(Resource):
             except:
                 return {"message": "An error occurred inserting the content."}, 500
         return {'message': 'Content not found.'}, 404
-
+    @jwt_required
     def delete(self, id):
         content_name = ContentModel.find_by_id(id)
         subjects_id = content_name.query.filter_by(
@@ -104,6 +104,7 @@ class Content(Resource):
         return {'message': 'Content not found.'}, 404
 
 class ContentBySubject(Resource):
+    @jwt_required
     def get(self, id):
         subject = SubjectModel.find_by_subject_id(id)
         if subject:

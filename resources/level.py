@@ -42,10 +42,12 @@ class LevelCreate(Resource):
 
 
 class LevelList(Resource):
+    @jwt_required
     def get(self):
         return {'Levels': list(map(lambda x: x.json(), LevelModel.query.all()))}
 
 class Level(Resource):
+    @jwt_required
     def get(self, id):
         level = LevelModel.find_by_id(id)
         if level:
@@ -114,6 +116,7 @@ class Level(Resource):
         return {'message': 'There is not such a level.'}, 404
 
 class ContentByLevel(Resource):
+    @jwt_required
     def get(self, _id):
         levels = LevelModel.find_by_id(_id)
         if levels:
@@ -156,6 +159,7 @@ class GameList(Resource):
 
 
 class Game(Resource):
+    @jwt_required
     def get(self, id):
         game = GameModel.find_by_id(id)
         if game:

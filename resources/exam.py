@@ -16,7 +16,7 @@ class QuestionPost(Resource):
         user = UserModel.find_by_id(claims['user_id'])
 
         if QuestionModel.find_by_code(code):
-            return {'message': 'Question is already exists.'}, 400
+            return {'message': 'Question code is already exists.'}, 400
         question_add = QuestionModel(code, question, subject)
         question_add.owner.append(user)
         for opt in answers:
@@ -34,17 +34,18 @@ class QuestionPost(Resource):
         return {'question_id': question_add.id, 'code': question_add.code, 'subject_id': question_add.subject_id}, 201
 
 class Questions(Resource):
+    @jwt_required
     def get(self):
         return {'questions': list(map(lambda x: x.json(), QuestionModel.query.all()))}
 
 class Question(Resource):
-
+    @jwt_required
     def get(self, id):
         question = QuestionModel.find_by_id(id)
         if question:
             return {'code': question.code, 'subject_id': question.subject_id, 'question': question.question, 'options': list(map(lambda x: x.json(), question.options))}, 200
         return {'message': 'Question not found.'}, 400
-
+    @jwt_required
     def put(self, id):
         code = QuestionModel.find_by_id(id)
         req_data = request.get_json()
@@ -71,7 +72,7 @@ class Question(Resource):
             code.save_to_db()
             return {'message': 'Updated'}, 200
         return {'message': 'Question not found.'}, 400
-
+    @jwt_required
     def delete(self, id):
         code = QuestionModel.find_by_id(id)
         if code:
@@ -114,13 +115,13 @@ class TestPost(Resource):
 
 
 class Tests(Resource):
-
+    @jwt_required
     def get(self):
         return {'Questions': list(map(lambda x: x.json(), TestModel.query.all()))}, 200
 
 
 class Test(Resource):
-
+    @jwt_required
     def get(self, id):
         test = TestModel.find_by_id(id)
         if test:
@@ -136,6 +137,7 @@ class Test(Resource):
 
             return {'test_id': test.id, 'test_name': test.name, 'questions': in_questions}, 200
         return {'message': 'Test is not found.'}, 400
+    @jwt_required
     def put(self, id):
         req_data = request.get_json()
         questions = req_data.get('questions')
@@ -156,7 +158,7 @@ class Test(Resource):
                 test.save_to_db()
             return {'message': 'Successfully updated.'}, 200
         return {'message': 'Test is not found.'}, 400
-
+    @jwt_required
     def delete(self, id):
         test = TestModel.find_by_id(id)
         if test:

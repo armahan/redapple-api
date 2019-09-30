@@ -12,6 +12,7 @@ class SubjectRegister(Resource):
                         type=int,
                         required=False,
                         help="This field must be parent id.")
+    @jwt_required
     def post(self):
         data = SubjectRegister.parser.parse_args()
         subject = SubjectModel.find_by_subject_name(data['subject_name'])
@@ -23,6 +24,7 @@ class SubjectRegister(Resource):
         return {"subject_id":subject.id, "subject": subject.name}, 201
 
 class SubjectList(Resource):
+    @jwt_required
     def get(self):
         return {'subjects': list(map(lambda x: x.json(), SubjectModel.query.all()))}
 
@@ -40,12 +42,14 @@ class Subject(Resource):
                         type=int,
                         required=False,
                         help="This field must be parent id.")
+    @jwt_required
     def get(self, id):
         subject = SubjectModel.find_by_subject_id(id)
         if subject:
             return subject.json()
         return {'message': 'subject not found'}, 404
 
+    @jwt_required
     def put(self, id):
         data = Subject.parser.parse_args()
         subject = SubjectModel.find_by_subject_id(id)
@@ -58,7 +62,7 @@ class Subject(Resource):
             except:
                 return {"message": "An error occurred inserting the subject."}, 500
         return {'message': 'Subject not found.'}, 404
-
+    @jwt_required
     def delete(self, id):
         subject = SubjectModel.find_by_subject_id(id)
         if subject:
