@@ -126,9 +126,9 @@ class UserModel(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), nullable=False)
+    username = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
-    password = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     auth_level = db.Column(db.Integer, nullable=True)
     
     games = db.relationship('GameModel', secondary=game_owners, backref='game_owners')
@@ -188,7 +188,7 @@ class ClassNameModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    name = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
 
     teacher = db.relationship('UserModel')
     student_class = db.relationship('StudentClassModel', lazy='dynamic')
@@ -293,8 +293,8 @@ class LevelModel(db.Model):
     __tablename__ = 'levels'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    description = db.Column(db.String(80))
+    name = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(140))
 
     owner = db.relationship('UserModel', secondary=level_owners, backref='level_owners')
     student_level = db.relationship('StudentLevelModel', lazy='dynamic')

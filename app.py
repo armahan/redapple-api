@@ -1,8 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request, Blueprint
 from flask_restful import Api
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from datetime import timedelta
 
+from database import db
 from resources.user import User, UserRegister, UserList, UserLogin, TokenRefresh, UserLogoutAccess, UserLogoutRefresh
 from resources.classname import ClassNameRegister, ClassNameList, ClassListByTeacher
 from resources.studentclass import StudentClassRegister, StudentInClass
@@ -18,6 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.secret_key = 'SHrjb66PHh5XrBaM'
 api = Api(app)
+api.prefix = '/api/v0.1'
 
 
 @app.before_first_request
@@ -27,10 +29,6 @@ jwt = JWTManager(app)
 
 @app.after_request
 def after_request(response):
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # response.headers.add('Access-Control-Allow-Headers',
-    #                      'Content-Type,Authorization')
-    # response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
     response.headers.add('Access-Control-Allow-Origin', '*')
     if request.method == 'OPTIONS':
         response.headers['Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT'
@@ -39,8 +37,6 @@ def after_request(response):
             response.headers['Access-Control-Allow-Headers'] = headers
     return response
 
-
-
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
     if identity['auth_level'] == 1:
@@ -48,7 +44,6 @@ def add_claims_to_jwt(identity):
     elif identity['auth_level'] == 2:
         return {'role': 'teacher', 'user_id': identity['user_id']}
     return {'role': 'student', 'user_id': identity['user_id']}
-
 
 api.add_resource(UserLogin, '/login')
 api.add_resource(TokenRefresh, '/refresh')
