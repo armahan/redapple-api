@@ -343,6 +343,7 @@ class GameModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(80))
+    is_published = db.Column(db.Boolean)
 
     owner = db.relationship('UserModel', secondary=game_owners, backref='game_owners')
     subscribe = db.relationship('UserModel', secondary=subscribes, backref='subscribe')
