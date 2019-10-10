@@ -61,9 +61,10 @@ class User(Resource):
         return {'message': 'User not found'}, 404
     @jwt_required
     def put(self, id):
+        claims = get_jwt_claims()
         data = _user_parser.parse_args()
         user = UserModel.find_by_id(id)
-        if user:
+        if user or claims['role'] == 'admin':
             user.username = data['user_name']
             user.email = data['email']
             user.password = data['password']
