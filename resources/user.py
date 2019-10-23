@@ -21,7 +21,7 @@ _user_parser.add_argument('email',
                     )
 _user_parser.add_argument('password',
                     type=str,
-                    required=True,
+                    required=False,
                     help="This field cannot be blank."
                     )
 _user_parser.add_argument('auth_level',
@@ -67,8 +67,9 @@ class User(Resource):
         if user or claims['role'] == 'admin':
             user.username = data['user_name']
             user.email = data['email']
-            user.password = data['password']
             user.auth_level = data['auth_level']
+            if data['password']:
+                user.password = data['password']
         else:
             user = UserModel(id, **data)
 
