@@ -349,13 +349,14 @@ class GameModel(db.Model):
     subscribe = db.relationship('UserModel', secondary=subscribes, backref='subscribe')
     levels = db.relationship('LevelModel', secondary="levelingames", viewonly=True)
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, is_published):
         self.name = name
         self.description = description
+        self.is_published = is_published
         self.levels = []
 
     def json(self):
-        return {'game_id': self.id, 'game_name': self.name, 'game_description': self.description}
+        return {'game_id': self.id, 'game_name': self.name, 'game_description': self.description, 'game_published': self.is_published}
 
     def rollback_db(self):
         db.session.rollback()

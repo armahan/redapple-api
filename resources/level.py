@@ -184,16 +184,18 @@ class Game(Resource):
                 delete.delete_from_db()
             game.name = data.get('game_name')
             game.description = data.get('game_description')
-            levels = data.get('levels')
-            for level in levels:
-                l_id = 0
-                l_weg = 0
-                if 'level_id' in level:
-                    l_id = level['level_id']
-                    l_weg = level['weight']
-                    #return{'level': l_id, 'weg': l_weg}, 200
-                    find_level = LevelModel.find_by_id(l_id)
-                    game.add_levels(find_level, l_weg)
+            game.is_published = data.get('game_published')
+            if data.get('levels'):
+                levels = data.get('levels')
+                for level in levels:
+                    l_id = 0
+                    l_weg = 0
+                    if 'level_id' in level:
+                        l_id = level['level_id']
+                        l_weg = level['weight']
+                        #return{'level': l_id, 'weg': l_weg}, 200
+                        find_level = LevelModel.find_by_id(l_id)
+                        game.add_levels(find_level, l_weg)
             game.save_to_db()
             return {'game_name': game.name, 'levels': list(map(lambda x: x.json(), game.levels))}, 200
         return {'message': 'There is not such a game.'}, 404
