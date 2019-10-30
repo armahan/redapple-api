@@ -131,11 +131,12 @@ class GameCreate(Resource):
         data = request.get_json()
         name = data.get('game_name')
         description = data.get('game_description')
+        is_publish = False
         levels = data.get('levels')
         user = UserModel.find_by_id(claims['user_id'])
         if GameModel.find_by_name(name):
             return {"message": " Game already exits."}, 400
-        game = GameModel(name, description)
+        game = GameModel(name, description, is_publish)
         if levels:
             for level in levels:
                 l_id = 0
@@ -179,13 +180,13 @@ class Game(Resource):
         data = request.get_json()
         game = GameModel.find_by_id(id)    
         if game:
-            level_del = LevelInGameModel.find_by_game_id(game.id)
-            for delete in level_del:
-                delete.delete_from_db()
             game.name = data.get('game_name')
             game.description = data.get('game_description')
             game.is_published = data.get('game_published')
             if data.get('levels'):
+                level_del = LevelInGameModel.find_by_game_id(game.id)
+                for delete in level_del:
+                    delete.delete_from_db()
                 levels = data.get('levels')
                 for level in levels:
                     l_id = 0
