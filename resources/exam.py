@@ -165,3 +165,13 @@ class Test(Resource):
             test.delete_from_db()
             return {'message': 'Test is deleted.'}, 200
         return {'message': 'Test is not found.'}, 400
+
+class TestsByUser(Resource):
+    @jwt_required
+    def get(self):
+        claims = get_jwt_claims()
+        user = UserModel.find_by_id(claims['user_id'])
+        if user:
+            return{
+                'tests': list(map(lambda x: x.json(), user.query.filter_by(id=user.id).first().tests))}, 200
+        return {'message': 'User not found.'}, 404

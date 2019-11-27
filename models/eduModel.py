@@ -132,6 +132,8 @@ class UserModel(db.Model):
     auth_level = db.Column(db.Integer, nullable=True)
     
     games = db.relationship('GameModel', secondary=game_owners, backref='game_owners')
+    contents = db.relationship('ContentModel', secondary=content_owners, backref='content_owners')
+    tests = db.relationship('TestModel', secondary=test_owners, backref='test_owners')
     questions = db.relationship('QuestionModel', secondary=question_owners, backref='question_owners')
     class_name = db.relationship('ClassNameModel', lazy='dynamic')
     student_class = db.relationship('StudentClassModel', lazy='dynamic')

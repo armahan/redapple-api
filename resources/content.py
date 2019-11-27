@@ -112,3 +112,13 @@ class ContentBySubject(Resource):
                 'subject': subject.name,
                 'contents': list(map(lambda x: x.json(), subject.query.filter_by(id=subject.id).first().content))}, 200
         return {'message': 'Subject not found.'}, 404
+
+class ContentsByUser(Resource):
+    @jwt_required
+    def get(self):
+        claims = get_jwt_claims()
+        user = UserModel.find_by_id(claims['user_id'])
+        if user:
+            return{
+                'contents': list(map(lambda x: x.json(), user.query.filter_by(id=user.id).first().contents))}, 200
+        return {'message': 'User not found.'}, 404

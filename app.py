@@ -10,8 +10,8 @@ from resources.studentclass import StudentClassRegister, StudentInClass
 from resources.level import LevelCreate, GameCreate, LevelList, GameList, Level, Game, GameLevels, ContentByLevel, GameSubscribe, GamesByUser, GetSubscribedGames
 from resources.studentlevel import StudentLevel, StudentLevelList, StudentLevelUpdate
 from resources.subject import SubjectRegister, Subject, SubjectList
-from resources.content import ContentPost, ContentList, Content, ContentBySubject
-from resources.exam import QuestionPost, Question, Questions, QuestionByUser, TestPost, Test, Tests
+from resources.content import ContentPost, ContentList, Content, ContentBySubject, ContentsByUser
+from resources.exam import QuestionPost, Question, Questions, QuestionByUser, TestPost, Test, Tests, TestsByUser
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:q1w2e3@127.0.0.1:3306/course'
@@ -90,6 +90,8 @@ api.add_resource(ContentList, '/contents')
 api.add_resource(Content, '/content/<int:id>')
 api.add_resource(ContentBySubject, '/contentbysubject/<int:id>')
 
+api.add_resource(ContentsByUser, '/contents/user')
+
 api.add_resource(QuestionPost, '/question/create')
 api.add_resource(Questions, '/questions')
 api.add_resource(Question, '/question/<int:id>')
@@ -99,6 +101,7 @@ api.add_resource(TestPost, '/test/create')
 api.add_resource(Test, '/test/<int:id>')
 api.add_resource(Tests, '/tests')
 
+api.add_resource(TestsByUser, '/tests/user')
 
 if __name__ == '__main__':
     from database import db
