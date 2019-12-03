@@ -38,7 +38,7 @@ class LevelCreate(Resource):
         level.owner.append(user)
         level.save_to_db()
         #return{'error':'There is an error!!!'}, 500
-        return {"level_id": level.id}, 201
+        return {'level_id': level.id, 'level_name': level.name, 'level_description': level.description}, 201
 
 
 class LevelList(Resource):

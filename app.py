@@ -14,7 +14,8 @@ from resources.content import ContentPost, ContentList, Content, ContentBySubjec
 from resources.exam import QuestionPost, Question, Questions, QuestionByUser, TestPost, Test, Tests, TestsByUser
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:q1w2e3@127.0.0.1:3306/course'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:q1w2e3@127.0.0.1:3306/course-turkish'
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 1800
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.secret_key = 'SHrjb66PHh5XrBaM'
